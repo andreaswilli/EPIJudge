@@ -11,9 +11,16 @@ def zero_one_random():
     return random.randrange(2)
 
 
+# generate log2(b-a+1) random bits, repeat if out of bounds
+# time: O(log(b-a+1))
 def uniform_random(lower_bound: int, upper_bound: int) -> int:
-    # TODO - you fill in here.
-    return 0
+    nr_outcomes = upper_bound - lower_bound + 1
+    while True:
+        random = 0
+        for i in range(nr_outcomes.bit_length()):
+            random |= zero_one_random() << i
+        if random < nr_outcomes:
+            return random + lower_bound
 
 
 @enable_executor_hook
