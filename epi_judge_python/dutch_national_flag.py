@@ -7,10 +7,69 @@ from test_framework.test_utils import enable_executor_hook
 
 RED, WHITE, BLUE = range(3)
 
-
+# create separate lists
+# time: O(n)
+# space: O(n)
+"""
 def dutch_flag_partition(pivot_index: int, A: List[int]) -> None:
-    # TODO - you fill in here.
-    return
+    smaller = []
+    equal = []
+    larger = []
+    pivot = A[pivot_index]
+
+    for i in range(len(A)):
+        if A[i] < pivot:
+            smaller.append(A[i])
+        elif A[i] == pivot:
+            equal.append(A[i])
+        else:
+            larger.append(A[i])
+
+    A[:] = smaller + equal + larger
+"""
+
+def swap(A, i, j):
+    A[i], A[j] = A[j], A[i]
+
+# iterate twice over array
+# time: O(n)
+# space: O(1)
+"""
+def dutch_flag_partition(pivot_index: int, A: List[int]) -> None:
+    pivot = A[pivot_index]
+
+    smaller = 0
+    for i in range(len(A)):
+        if A[i] < pivot:
+            swap(A, i, smaller)
+            smaller += 1
+
+    larger = len(A) - 1
+    for i in reversed(range(len(A))):
+        if A[i] > pivot:
+            swap(A, i, larger)
+            larger -= 1
+"""
+
+# iterate once over array
+# time: O(n)
+# space: O(1)
+def dutch_flag_partition(pivot_index: int, A: List[int]) -> None:
+    smaller = 0
+    equal = 0
+    larger = len(A)
+    pivot = A[pivot_index]
+
+    while equal < larger:
+        if A[equal] < pivot:
+            swap(A, equal, smaller)
+            smaller += 1
+            equal += 1
+        elif A[equal] > pivot:
+            larger -= 1
+            swap(A, equal, larger)
+        else:
+            equal += 1
 
 
 @enable_executor_hook
