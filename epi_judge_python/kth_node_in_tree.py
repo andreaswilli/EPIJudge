@@ -14,10 +14,33 @@ class BinaryTreeNode:
         self.size = size
 
 
-def find_kth_node_binary_tree(tree: BinaryTreeNode,
-                              k: int) -> Optional[BinaryTreeNode]:
-    # TODO - you fill in here.
-    return None
+# time: O(h)
+# space: O(h), maybe O(1) because of TCO?
+# def find_kth_node_binary_tree(tree: BinaryTreeNode, k: int) -> Optional[BinaryTreeNode]:
+#     def traverse(tree: BinaryTreeNode, traversed_nodes):
+#         cur_pos = traversed_nodes + (tree.left.size if tree.left else 0) + 1
+#         if cur_pos == k:
+#             return tree
+#         if cur_pos > k:
+#             return traverse(tree.left, traversed_nodes)
+#         return traverse(tree.right, cur_pos)
+
+#     return traverse(tree, 0)
+
+# time: O(h)
+# space: O(1)
+def find_kth_node_binary_tree(tree: BinaryTreeNode, k: int) -> Optional[BinaryTreeNode]:
+    while tree:
+        cur_pos = (tree.left.size if tree.left else 0) + 1
+        if k == cur_pos:
+            return tree
+        if k < cur_pos:
+            tree = tree.left
+        else:
+            tree = tree.right
+            k -= cur_pos
+
+    return tree
 
 
 @enable_executor_hook
@@ -30,16 +53,18 @@ def find_kth_node_binary_tree_wrapper(executor, tree, k):
 
     init_size(tree)
 
-    result = executor.run(functools.partial(find_kth_node_binary_tree, tree,
-                                            k))
+    result = executor.run(functools.partial(find_kth_node_binary_tree, tree, k))
 
     if not result:
-        raise TestFailure('Result can\'t be None')
+        raise TestFailure("Result can't be None")
     return result.data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(
-        generic_test.generic_test_main('kth_node_in_tree.py',
-                                       'kth_node_in_tree.tsv',
-                                       find_kth_node_binary_tree_wrapper))
+        generic_test.generic_test_main(
+            "kth_node_in_tree.py",
+            "kth_node_in_tree.tsv",
+            find_kth_node_binary_tree_wrapper,
+        )
+    )
