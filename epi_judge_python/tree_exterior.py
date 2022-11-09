@@ -7,14 +7,41 @@ from test_framework.test_failure import TestFailure
 from test_framework.test_utils import enable_executor_hook
 
 
+# time: O(n)
+# space: O(h)
 def exterior_binary_tree(tree: BinaryTreeNode) -> List[BinaryTreeNode]:
-    # TODO - you fill in here.
-    return []
+    def get_leaves(tree: BinaryTreeNode | None) -> List[BinaryTreeNode]:
+        if not tree:
+            return []
+        if not tree.left and not tree.right:
+            return [tree]
+        return get_leaves(tree.left) + get_leaves(tree.right)
+
+    if not tree:
+        return []
+
+    exterior = [tree]
+
+    cur = tree.left
+    while cur and (cur.left or cur.right):
+        exterior.append(cur)
+        cur = cur.left or cur.right
+
+    exterior += get_leaves(tree.left) + get_leaves(tree.right)
+
+    right = []
+    cur = tree.right
+    while cur and (cur.right or cur.left):
+        right.append(cur)
+        cur = cur.right or cur.left
+    exterior += list(reversed(right))
+
+    return exterior
 
 
 def create_output_list(L):
     if any(l is None for l in L):
-        raise TestFailure('Resulting list contains None')
+        raise TestFailure("Resulting list contains None")
     return [l.data for l in L]
 
 
@@ -25,7 +52,9 @@ def create_output_list_wrapper(executor, tree):
     return create_output_list(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(
-        generic_test.generic_test_main('tree_exterior.py', 'tree_exterior.tsv',
-                                       create_output_list_wrapper))
+        generic_test.generic_test_main(
+            "tree_exterior.py", "tree_exterior.tsv", create_output_list_wrapper
+        )
+    )
