@@ -12,9 +12,31 @@ class BinaryTreeNode:
         self.next = None  # Populates this field.
 
 
-def construct_right_sibling(tree: BinaryTreeNode) -> None:
-    # TODO - you fill in here.
-    return
+# time: O(n)
+# space: O(h)
+# def construct_right_sibling(tree: BinaryTreeNode | None) -> None:
+#     if not tree:
+#         return
+#     cur_left = tree.left
+#     cur_right = tree.right
+#     while cur_left and cur_right:
+#         cur_left.next = cur_right
+#         cur_left = cur_left.right
+#         cur_right = cur_right.left
+#     construct_right_sibling(tree.left)
+#     construct_right_sibling(tree.right)
+
+# time: O(n)
+# space: O(1)
+def construct_right_sibling(tree: BinaryTreeNode | None) -> None:
+    while tree and tree.left:
+        cur = tree
+        while cur:
+            cur.left.next = cur.right
+            if cur.next:
+                cur.right.next = cur.next.left
+            cur = cur.next
+        tree = tree.left
 
 
 def traverse_next(node):
@@ -35,8 +57,7 @@ def clone_tree(original):
     if not original:
         return None
     cloned = BinaryTreeNode(original.data)
-    cloned.left, cloned.right = clone_tree(original.left), clone_tree(
-        original.right)
+    cloned.left, cloned.right = clone_tree(original.left), clone_tree(original.right)
     return cloned
 
 
@@ -46,12 +67,14 @@ def construct_right_sibling_wrapper(executor, tree):
 
     executor.run(functools.partial(construct_right_sibling, cloned))
 
-    return [[n.data for n in traverse_next(level)]
-            for level in traverse_left(cloned)]
+    return [[n.data for n in traverse_next(level)] for level in traverse_left(cloned)]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(
-        generic_test.generic_test_main('tree_right_sibling.py',
-                                       'tree_right_sibling.tsv',
-                                       construct_right_sibling_wrapper))
+        generic_test.generic_test_main(
+            "tree_right_sibling.py",
+            "tree_right_sibling.tsv",
+            construct_right_sibling_wrapper,
+        )
+    )
