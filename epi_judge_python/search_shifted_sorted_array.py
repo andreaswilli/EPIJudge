@@ -3,9 +3,21 @@ from typing import List
 from test_framework import generic_test
 
 
+# time: O(log n)
+# space: O(1)
 def search_smallest(A: List[int]) -> int:
-    # TODO - you fill in here.
-    return 0
+    lower = 0
+    upper = len(A) - 1
+
+    while lower < upper:
+        mid = lower + (upper - lower) // 2
+
+        if A[mid] > A[upper]:
+            lower = mid + 1
+        else:
+            upper = mid
+
+    return lower
 
 
 if __name__ == '__main__':
