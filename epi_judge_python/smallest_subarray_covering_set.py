@@ -9,10 +9,55 @@ from test_framework.test_utils import enable_executor_hook
 Subarray = collections.namedtuple('Subarray', ('start', 'end'))
 
 
+# time: O(n^2)
+# space: O(k), where k is the number of keywords
+# def find_smallest_subarray_covering_set(paragraph: List[str],
+#                                         keywords: Set[str]) -> Subarray:
+#     covered: Set[str] = set()
+#     l_res = 0
+#     r_res = len(paragraph) - 1
+#
+#     l = r = 0
+#     while l <= r < len(paragraph):
+#         covered = set(
+#                 filter(lambda w: w in keywords, paragraph[l:r+1]))
+#         if len(covered) < len(keywords):
+#             r += 1
+#         else:
+#             if (r - l) < (r_res - l_res):
+#                 l_res = l
+#                 r_res = r
+#             l += 1
+#
+#     return Subarray(l_res, r_res)
+
+
+# time: O(n)
+# space: O(k), where k is the number of keywords
 def find_smallest_subarray_covering_set(paragraph: List[str],
                                         keywords: Set[str]) -> Subarray:
-    # TODO - you fill in here.
-    return Subarray(0, 0)
+    keywords_to_cover = collections.Counter(keywords)
+    result = Subarray(start=-1, end=-1)
+    remaining_to_cover = len(keywords)
+    left = 0
+    for right, p in enumerate(paragraph):
+        if p in keywords:
+            keywords_to_cover[p] -= 1
+            if keywords_to_cover[p] == 0:
+                remaining_to_cover -= 1
+
+        while remaining_to_cover == 0:
+            if result == Subarray(start=-1, end=-1) or (
+                right - left < result.end - result.start):
+                result = Subarray(start=left, end=right)
+
+            pl = paragraph[left]
+            if pl in keywords:
+                keywords_to_cover[pl] += 1
+                if keywords_to_cover[pl] > 0:
+                    remaining_to_cover += 1
+            left += 1
+    return result
 
 
 @enable_executor_hook
