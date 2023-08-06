@@ -1,6 +1,6 @@
 import collections
 import functools
-from typing import List
+from typing import Dict, List
 
 from test_framework import generic_test
 from test_framework.test_utils import enable_executor_hook
@@ -8,11 +8,28 @@ from test_framework.test_utils import enable_executor_hook
 Subarray = collections.namedtuple('Subarray', ('start', 'end'))
 
 
+# time: O(n)
+# space: O(k), where k is the number of keywords
 def find_smallest_sequentially_covering_subset(paragraph: List[str],
                                                keywords: List[str]
                                                ) -> Subarray:
-    # TODO - you fill in here.
-    return Subarray(0, 0)
+    result = Subarray(0, len(paragraph) - 1)
+    last_occurence: Dict[str, int] = dict()
+    start: Dict[int, int] = dict()
+
+    for i, word in enumerate(paragraph):
+        if word == keywords[0]:
+            start[i] = i
+            last_occurence[word] = i
+        elif word in keywords:
+            prev_keyword = keywords[keywords.index(word) - 1]
+            if prev_keyword in last_occurence:
+                start[i] = start[last_occurence[prev_keyword]]
+                last_occurence[word] = i
+                if word == keywords[-1] and i - start[i] < result.end - result.start:
+                    result = Subarray(start[i], i)
+
+    return result
 
 
 @enable_executor_hook
