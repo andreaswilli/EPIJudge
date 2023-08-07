@@ -1562,7 +1562,7 @@ problem_mapping = {
                 "total": 987
             },
             "Python: longest_subarray_with_distinct_values.py": {
-                "passed": 0,
+                "passed": 987,
                 "total": 987
             }
         },
